@@ -1,53 +1,83 @@
-package com.bolsadeideas.springboot.web.lucila.app.models.entity;
+package com.springboot.web.lucila.app.models.entity;
 
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "users")
-public class User  implements Serializable{
+public class User implements Serializable{
 
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idUser;
+	private Long id;
 	
 	@Email(message="Formato de Email invalido, Ej: \"email@email.com\"")
-	//@NotEmpty(message= "No puede estar vacio")
-	//@Column(nullable = false, unique=true)
+	@NotEmpty(message= "No puede estar vacio")
+	@Column(nullable = false, unique=true)
 	private String email;
 	
-	//@NotEmpty(message = "No puede estar vacio")
-	//@Column(nullable = false, unique = true)
+	@NotEmpty(message = "No puede estar vacio")
+	@Column(nullable = false, unique = true)
 	private String username;
 	
 	@Column
-	//@NotEmpty
+	@NotEmpty
 	private String password;
 	
+	@NotNull
 	private Boolean enabled;
 	
-	/*@OneToOne
-	private List<Cliente> cliente;*/
+	@OneToOne(mappedBy = "user")
+	@JoinColumn(name = "id_cliente")
+	@JsonManagedReference
+	private Cliente cliente;
 	
+
+
+	public User(Long id,
+			@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"") @NotEmpty(message = "No puede estar vacio") String email,
+			@NotEmpty(message = "No puede estar vacio") String username, @NotEmpty String password,
+			@NotNull Boolean enabled, Cliente cliente) {
+		super();
+		this.id = id;
+		this.email = email;
+		this.username = username;
+		this.password = password;
+		this.enabled = enabled;
+		this.cliente = cliente;
+	}
+	
+	
+
+	public User() {
+
+	}
+
 
 
 	public Long getId() {
-		return idUser;
+		return id;
 	}
 
-	public void setId(Long idUser) {
-		this.idUser = idUser;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getEmail() {
@@ -83,15 +113,15 @@ public class User  implements Serializable{
 	}
 	
 
-	/*public List<Cliente> getCliente() {
+	public Cliente getCliente() {
 		return cliente;
 	}
 
 
-	public void setCliente(List<Cliente> cliente) {
+	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-	*/
+	
 	
 	/**
 	 * 

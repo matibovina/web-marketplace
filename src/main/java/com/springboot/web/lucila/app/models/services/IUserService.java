@@ -1,9 +1,9 @@
-package com.bolsadeideas.springboot.web.lucila.app.models.services;
+package com.springboot.web.lucila.app.models.services;
 
 import java.util.List;
 
-import com.bolsadeideas.springboot.web.lucila.app.models.entity.Cliente;
-import com.bolsadeideas.springboot.web.lucila.app.models.entity.User;
+import com.springboot.web.lucila.app.models.entity.Cliente;
+import com.springboot.web.lucila.app.models.entity.User;
 
 public interface IUserService {
 	
@@ -16,5 +16,7 @@ public interface IUserService {
 	public List<Cliente> findByNombre(String nombre);
 	
 	public void delete(Long id);
+	
+	public void saveCliente(Cliente cliente);
 
 }

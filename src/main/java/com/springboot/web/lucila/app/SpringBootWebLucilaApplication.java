@@ -1,4 +1,4 @@
-package com.bolsadeideas.springboot.web.lucila.app;
+package com.springboot.web.lucila.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

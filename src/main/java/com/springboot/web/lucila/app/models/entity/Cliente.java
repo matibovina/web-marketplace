@@ -1,13 +1,16 @@
-package com.bolsadeideas.springboot.web.lucila.app.models.entity;
+package com.springboot.web.lucila.app.models.entity;
 
 import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -20,7 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-//@Entity
+@Entity
 @Table(name = "clientes")
 public class Cliente implements Serializable {
 
@@ -34,25 +37,32 @@ public class Cliente implements Serializable {
 
 	@NotEmpty
 	private String apellido;
-	
-	@Email(message="Formato de Email invalido, Ej: \"email@email.com\"")
-	@NotEmpty(message= "No puede estar vacio")
-	@Column(nullable = false, unique=true)
+
+	@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"")
+	@NotEmpty(message = "No puede estar vacio")
+	@Column(nullable = false, unique = true)
 	private String email;
-	
+
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
+
+	private Long telefono;
+
+	private String direccion;
 
 	@NotEmpty
 	@DateTimeFormat
 	private String fechaNacimiento;
 
+	@OneToOne(optional = true)
+	@JoinColumn(name = "id_user")
+	private User user;
+
 	@PrePersist
 	public void prePersist() {
 		createAt = new Date();
 	}
-	
 
 	public Long getId() {
 		return id;
@@ -78,6 +88,30 @@ public class Cliente implements Serializable {
 		this.apellido = apellido;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Long getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(Long telefono) {
+		this.telefono = telefono;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
 	public Date getCreateAt() {
 		return createAt;
 	}
@@ -92,6 +126,14 @@ public class Cliente implements Serializable {
 
 	public void setFechaNacimiento(String fechaNacimiento) {
 		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	/**
