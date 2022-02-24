@@ -1,15 +1,16 @@
 package com.springboot.web.lucila.app.models.entity;
 
-public class Carrito {
-	
+import java.io.Serializable;
+
+public class ItemRecibo implements Serializable {
+
 	private Long id;
 	
-	private Cliente cliente;
-	
+	private Long numeroRecibo;
+
 	private Producto producto;
 
 	private int cantidad;
-	
 	
 
 	public Long getId() {
@@ -19,15 +20,7 @@ public class Carrito {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public Cliente getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
-	}
-
+	
 	public Producto getProducto() {
 		return producto;
 	}
@@ -43,7 +36,17 @@ public class Carrito {
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
 	}
-	
-	
-	
+
+
+	public Long getNumeroRecibo() {
+		return numeroRecibo;
+	}
+
+	public void setNumeroRecibo(Long numeroRecibo) {
+		this.numeroRecibo = numeroRecibo;
+	}
+
+
+	private static final long serialVersionUID = 1L;
+
 }
