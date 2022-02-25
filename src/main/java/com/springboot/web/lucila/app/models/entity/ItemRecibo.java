@@ -10,7 +10,7 @@ public class ItemRecibo implements Serializable {
 
 	private Producto producto;
 
-	private int cantidad;
+	private Integer cantidad;
 	
 
 	public Long getId() {
@@ -28,7 +28,7 @@ public class ItemRecibo implements Serializable {
 	public void setProducto(Producto producto) {
 		this.producto = producto;
 	}
-
+	
 	public int getCantidad() {
 		return cantidad;
 	}
@@ -45,7 +45,10 @@ public class ItemRecibo implements Serializable {
 	public void setNumeroRecibo(Long numeroRecibo) {
 		this.numeroRecibo = numeroRecibo;
 	}
-
+	
+	public Double calcularImporte() {
+		return cantidad.doubleValue()*producto.getPrecio();
+	}
 
 	private static final long serialVersionUID = 1L;
 

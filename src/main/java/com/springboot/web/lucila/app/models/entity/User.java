@@ -21,35 +21,34 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable{
-
+public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@Email(message="Formato de Email invalido, Ej: \"email@email.com\"")
-	@NotEmpty(message= "No puede estar vacio")
-	@Column(nullable = false, unique=true)
+
+	@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"")
+	@NotEmpty(message = "No puede estar vacio")
+	@Column(nullable = false, unique = true)
 	private String email;
-	
+
 	@NotEmpty(message = "No puede estar vacio")
 	@Column(nullable = false, unique = true)
 	private String username;
-	
+
 	@Column
 	@NotEmpty
 	private String password;
-	
+
 	@NotNull
 	private Boolean enabled;
-	
+
 	@OneToOne(mappedBy = "user")
 	@JoinColumn(name = "id_cliente")
 	@JsonManagedReference
 	private Cliente cliente;
-	
 
+	private List<Authority> roles;
 
 	public User(Long id,
 			@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"") @NotEmpty(message = "No puede estar vacio") String email,
@@ -63,14 +62,8 @@ public class User implements Serializable{
 		this.enabled = enabled;
 		this.cliente = cliente;
 	}
-	
-	
 
-	public User() {
-
-	}
-
-
+	public User() {}
 
 	public Long getId() {
 		return id;
@@ -111,18 +104,23 @@ public class User implements Serializable{
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
-	
 
 	public Cliente getCliente() {
 		return cliente;
 	}
 
-
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-	
-	
+
+	public List<Authority> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Authority> roles) {
+		this.roles = roles;
+	}
+
 	/**
 	 * 
 	 */

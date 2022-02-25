@@ -1,24 +1,34 @@
 package com.springboot.web.lucila.app.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class Recibo  implements Serializable{
+import javax.persistence.PrePersist;
 
-	
+public class Recibo implements Serializable {
+
 	private Long id;
-	
+
 	private Date fecha;
-	
+
 	private String descripcion;
-	
+
 	private String observaciones;
-	
+
 	private Cliente cliente;
-	
-	private ItemRecibo itemRecibo;
-	
-	private Float total;
+
+	private List<ItemRecibo> itemRecibo;
+
+	public Recibo() {
+		this.itemRecibo = new ArrayList<ItemRecibo>();
+	}
+
+	@PrePersist
+	public void prePersist() {
+		fecha = new Date();
+	}
 
 	public Long getId() {
 		return id;
@@ -60,27 +70,34 @@ public class Recibo  implements Serializable{
 		this.cliente = cliente;
 	}
 
-	public Float getTotal() {
-		return total;
-	}
-
-	public void setTotal(Float total) {
-		this.total = total;
-	}
-
-	public ItemRecibo getItemRecibo() {
+	public List<ItemRecibo> getItemRecibo() {
 		return itemRecibo;
 	}
 
-	public void setItemRecibo(ItemRecibo itemRecibo) {
+	public void setItemRecibo(List<ItemRecibo> itemRecibo) {
 		this.itemRecibo = itemRecibo;
 	}
-	
+
+	public void addItemRecibo(ItemRecibo item) {
+		this.itemRecibo.add(item);
+	}
+
+	public Double calcularTotal() {
+
+		Double total = 0.0;
+
+		int size = itemRecibo.size();
+		for (int i = 0; i < size; i++) {
+			total += itemRecibo.get(i).calcularImporte();
+		}
+
+		return total;
+
+	}
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
 }
