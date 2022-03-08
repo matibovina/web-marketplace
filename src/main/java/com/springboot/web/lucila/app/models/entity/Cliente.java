@@ -1,8 +1,11 @@
 package com.springboot.web.lucila.app.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -17,11 +21,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "clientes")
@@ -49,20 +52,51 @@ public class Cliente implements Serializable {
 
 	private Long telefono;
 
-	private String direccion;
-
-	@NotEmpty
 	@DateTimeFormat
+	@Column(name = "fecha_nacimiento")
 	private String fechaNacimiento;
 
-	@OneToOne(optional = true)
-	@JoinColumn(name = "id_user")
+	@OneToOne(optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
 	private User user;
-
+		
+	
+	@JsonIgnoreProperties({"cliente", "hibernateLazyInitializer", "handler"})
+	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Recibo> recibos;
+	
+	@JsonIgnoreProperties({"cliente", "hibernateLazyInitializer", "handler"})
+	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Carrito> carrito;
+	
 	@PrePersist
 	public void prePersist() {
 		createAt = new Date();
 	}
+	
+	public Cliente() {
+		recibos = new ArrayList<Recibo>();
+		carrito = new ArrayList<Carrito>();
+	}
+	
+	 
+
+	public List<Recibo> getRecibos() {
+		return recibos;
+	}
+
+	public void setRecibos(List<Recibo> recibos) {
+		this.recibos = recibos;
+	}
+
+	public List<Carrito> getCarrito() {
+		return carrito;
+	}
+
+	public void setCarrito(List<Carrito> carrito) {
+		this.carrito = carrito;
+	}
+
 
 	public Long getId() {
 		return id;
@@ -102,14 +136,6 @@ public class Cliente implements Serializable {
 
 	public void setTelefono(Long telefono) {
 		this.telefono = telefono;
-	}
-
-	public String getDireccion() {
-		return direccion;
-	}
-
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
 	}
 
 	public Date getCreateAt() {

@@ -6,15 +6,15 @@ import com.springboot.web.lucila.app.models.entity.Producto;
 
 public interface IProductoService {
 	
-	public List<Producto> listarProductos();
+	public List<Producto> findAll();
 	
-	public void saveProducto(Producto producto);
+	public Producto saveProducto(Producto producto);
 	
 	public Producto findById(Long id);
 	
 	public void deleteById(Long id);
 	
-	public Producto findByNombre(String nombre);
+	public List<Producto> findbyNombre(String nombre);
 	
 	
 

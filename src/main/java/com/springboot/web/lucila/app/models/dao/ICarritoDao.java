@@ -1,5 +1,9 @@
 package com.springboot.web.lucila.app.models.dao;
 
-public interface ICarritoDao {
+import org.springframework.data.repository.CrudRepository;
+
+import com.springboot.web.lucila.app.models.entity.Carrito;
+
+public interface ICarritoDao extends CrudRepository<Carrito, Long>{
 
 }

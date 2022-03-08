@@ -1,11 +1,15 @@
 package com.springboot.web.lucila.app.models.dao;
 
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.springboot.web.lucila.app.models.entity.Producto;
 
 public interface IProductoDao extends CrudRepository<Producto, Long>{
 	
-	public Producto findbyNombre(String nombre);
+	@Query("select p from Producto p where p.nombre like %?1%")
+	public List<Producto> findbyNombre(String nombre);
 
 }

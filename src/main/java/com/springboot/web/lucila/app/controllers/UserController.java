@@ -27,20 +27,21 @@ import com.springboot.web.lucila.app.models.entity.User;
 import com.springboot.web.lucila.app.models.services.IUserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api")
 public class UserController {
 
 	@Autowired
 	private IUserService userService;
+	
 
-	@GetMapping(value = "/listar")
+	@GetMapping(value = "/")
 	public List<User> mostrarUsuarios(Model model) {
 		return userService.findAll();
 	}
 
-	@PostMapping("/users")
+	@PostMapping("/user")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> save(@Valid @RequestBody User user, BindingResult result) {
+	public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult result) {
 
 		User usuario = null;
 
@@ -70,8 +71,8 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 
-	@PutMapping("users/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody User user, BindingResult result) {
+	@PutMapping("user/update/{id}")
+	public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User user, BindingResult result) {
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -111,9 +112,9 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 
-	@DeleteMapping("/clientes/{id}")
+	@DeleteMapping("/user/delete/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public ResponseEntity<?> delete(@PathVariable Long id) {
+	public ResponseEntity<?> deleteUser(@PathVariable Long id) {
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -131,5 +132,7 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}
+	
+	
 
 }

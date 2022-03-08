@@ -11,11 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;import org.hibernate.boot.model.naming.ImplicitAnyDiscriminatorColumnNameSource;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -43,11 +46,14 @@ public class User implements Serializable {
 	@NotNull
 	private Boolean enabled;
 
-	@OneToOne(mappedBy = "user")
-	@JoinColumn(name = "id_cliente")
-	@JsonManagedReference
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
 	private Cliente cliente;
-
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "authorities", joinColumns = @JoinColumn(name = "user_id"),
+	inverseJoinColumns = @JoinColumn(name = "role_id"),
+	uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})})
 	private List<Authority> roles;
 
 	public User(Long id,
@@ -120,7 +126,7 @@ public class User implements Serializable {
 	public void setRoles(List<Authority> roles) {
 		this.roles = roles;
 	}
-
+	
 	/**
 	 * 
 	 */
