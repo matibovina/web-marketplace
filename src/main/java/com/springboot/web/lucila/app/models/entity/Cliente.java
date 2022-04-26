@@ -21,6 +21,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -34,11 +36,13 @@ public class Cliente implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_cliente")
 	private Long id;
-
+	
 	@NotEmpty
+	@Size(min=2, max=15, message="La longitud del nombre es de 2 a 15 caracteres")
 	private String nombre;
 
 	@NotEmpty
+	@Size(min=2, max=15, message="La longitud del apellido es de 2 a 15 caracteres")
 	private String apellido;
 
 	@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"")
@@ -49,16 +53,18 @@ public class Cliente implements Serializable {
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
-
+	
+	@NotNull
 	private Long telefono;
-
+	
+	@NotNull(message = "La fecha de nacimiento es obligatoria")
 	@DateTimeFormat
 	@Column(name = "fecha_nacimiento")
 	private String fechaNacimiento;
 
 	@OneToOne(optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
-	private User user;
+	private Usuario user;
 		
 	
 	@JsonIgnoreProperties({"cliente", "hibernateLazyInitializer", "handler"})
@@ -69,10 +75,10 @@ public class Cliente implements Serializable {
 	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Carrito> carrito;
 	
-	@PrePersist
+	 @PrePersist
 	public void prePersist() {
 		createAt = new Date();
-	}
+	} 
 	
 	public Cliente() {
 		recibos = new ArrayList<Recibo>();
@@ -154,11 +160,11 @@ public class Cliente implements Serializable {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
-	public User getUser() {
+	public Usuario getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Usuario user) {
 		this.user = user;
 	}
 

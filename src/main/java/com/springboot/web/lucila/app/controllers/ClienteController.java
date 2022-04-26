@@ -10,8 +10,12 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,23 +40,51 @@ public class ClienteController {
 	@Autowired
 	private IClienteService clienteService;
 
-
+	//@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/clientes")
 	public List<Cliente> listarClientes() {
 		return (List<Cliente>) clienteService.findAll();
 	}
 	
-	@GetMapping("/clientes/{id}")
-	public Cliente showCliente(@PathVariable Long id) {
-		return clienteService.findById(id);
+	@GetMapping("/clientes/page/{page}")
+	public Page<Cliente> listarClientesPageable(@PathVariable Integer page ) {
+		Pageable pageable = PageRequest.of(page, 3);
+		return clienteService.findAll(pageable);
 	}
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@GetMapping("/clientes/{id}")
+	public ResponseEntity<?> showCliente(@PathVariable Long id) {
+		
+		Map<String, Object> response = new HashMap<>();
+		
+		Cliente cliente= null;
 
+		try {
+			
+			cliente = clienteService.findById(id);
+			
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error al consultar la base de datos.");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);		
+			}
+		
+		if(cliente == null) {
+			response.put("mensaje", "El cliente no existe en la base de datos.");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		
+
+		return new ResponseEntity<Cliente>(cliente, HttpStatus.OK);		
+
+	}
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping(value = {"/clientes", "/user/{id}"})
 	public ResponseEntity<?> createCliente(
 			@Valid @RequestBody Cliente cliente, BindingResult result) {
 
 		Cliente nuevoCliente = null;
-	//	User user = userService.findById(user_id);
+	//	Usuario user = userService.findById(user_id);
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -77,11 +109,12 @@ public class ClienteController {
 	/*	if (user != null) {
 			user.setCliente(nuevoCliente);
 		} */
-
+		response.put("cliente", nuevoCliente);
 		response.put("mensaje", "El cliente ha sido creado con éxito!");
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-
+	
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PutMapping(value = {"/clientes/{id}"})
 	public ResponseEntity<?> updateCliente(
 			@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable Long id) {
@@ -90,7 +123,7 @@ public class ClienteController {
 
 		Cliente clienteActualizado = null;
 
-		//User user = userService.findById(id);
+		//Usuario user = userService.findById(id);
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -134,7 +167,8 @@ public class ClienteController {
 
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-
+	
+	@Secured("ROLE_ADMIN")
 	@DeleteMapping("/clientes/{id}")
 	public ResponseEntity<?> deleteCliente(@Valid @PathVariable Long id) {
 

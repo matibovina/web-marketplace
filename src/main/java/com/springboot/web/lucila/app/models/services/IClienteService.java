@@ -2,6 +2,9 @@ package com.springboot.web.lucila.app.models.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.springboot.web.lucila.app.models.entity.Carrito;
 import com.springboot.web.lucila.app.models.entity.Cliente;
 import com.springboot.web.lucila.app.models.entity.Recibo;
@@ -9,6 +12,8 @@ import com.springboot.web.lucila.app.models.entity.Recibo;
 public interface IClienteService {
 	
 	public List<Cliente> findAll();
+	
+	public Page<Cliente> findAll(Pageable pageable);
 	
 	public Cliente save(Cliente user);
 	

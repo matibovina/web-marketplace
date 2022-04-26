@@ -3,6 +3,8 @@ package com.springboot.web.lucila.app.models.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,11 @@ public class ProductoServiceImpl implements IProductoService {
 	@Transactional(readOnly = true)
 	public List<Producto> findbyNombre(String nombre) {
 		return productoDao.findbyNombre(nombre);
+	}
+
+	@Override
+	public Page<Producto> findAll(Pageable pageable) {
+		return productoDao.findAll(pageable);
 	} 
 
 }

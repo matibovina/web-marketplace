@@ -8,25 +8,25 @@ import org.springframework.stereotype.Service;
 import com.springboot.web.lucila.app.models.dao.IClienteDao;
 import com.springboot.web.lucila.app.models.dao.IUserDao;
 import com.springboot.web.lucila.app.models.entity.Cliente;
-import com.springboot.web.lucila.app.models.entity.User;
+import com.springboot.web.lucila.app.models.entity.Usuario;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl  {
 
-	@Autowired
+/*	@Autowired
 	private IUserDao userDao;
 
 	@Autowired
 	private IClienteDao clienteDao;
 
 	@Override
-	public List<User> findAll() {
+	public List<Usuario> findAll() {
 		// TODO Auto-generated method stub
-		return (List<User>) userDao.findAll();
+		return (List<Usuario>) userDao.findAll();
 	}
 
 	@Override
-	public User save(User user) {
+	public Usuario save(Usuario user) {
 		return userDao.save(user);
 	}
 
@@ -44,7 +44,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public User findById(Long id) {
+	public Usuario findById(Long id) {
 		return userDao.findById(id).orElse(null);
 	}
 
@@ -53,5 +53,11 @@ public class UserServiceImpl implements IUserService {
 		// TODO Auto-generated method stub
 		 clienteDao.save(cliente);
 	}
-	
+
+	@Override
+	public Usuario findByUsername(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	*/
 }

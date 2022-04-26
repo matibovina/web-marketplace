@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.springboot.web.lucila.app.models.entity.User;
+import com.springboot.web.lucila.app.models.entity.Usuario;
 import com.springboot.web.lucila.app.models.services.IUserService;
 
 @RestController
@@ -33,17 +34,18 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 	
-
-	@GetMapping(value = "/")
-	public List<User> mostrarUsuarios(Model model) {
+	@Secured("ROLE_ADMIN")
+	@GetMapping("/users")
+	public List<Usuario> mostrarUsuarios() {
 		return userService.findAll();
 	}
-
+	
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("/user")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult result) {
+	public ResponseEntity<?> createUser(@Valid @RequestBody Usuario user, BindingResult result) {
 
-		User usuario = null;
+		Usuario usuario = null;
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -70,14 +72,15 @@ public class UserController {
 
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-
+	
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PutMapping("user/update/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User user, BindingResult result) {
+	public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody Usuario user, BindingResult result) {
 
 		Map<String, Object> response = new HashMap<>();
 
-		User userActual = userService.findById(id);
-		User updatedUser = null;
+		Usuario userActual = userService.findById(id);
+		Usuario updatedUser = null;
 
 		if (result.hasErrors()) {
 			List<String> errors = result.getFieldErrors().stream()
@@ -99,7 +102,7 @@ public class UserController {
 			userActual.setUsername(user.getUsername());
 			userActual.setEmail(user.getEmail());
 			userActual.setPassword(user.getPassword());
-			userActual.setEnabled(user.getEnabled());
+			userActual.setEnabled(user.isEnabled());
 
 			updatedUser = userService.save(userActual);
 		} catch (DataAccessException e) {
@@ -111,7 +114,8 @@ public class UserController {
 		response.put("user", updatedUser);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-
+	
+	@Secured("ROLE_ADMIN")
 	@DeleteMapping("/user/delete/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<?> deleteUser(@PathVariable Long id) {

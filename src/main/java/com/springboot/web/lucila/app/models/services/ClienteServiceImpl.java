@@ -1,17 +1,16 @@
 package com.springboot.web.lucila.app.models.services;
 
 import java.util.List;
-
 import org.springframework.transaction.annotation.Transactional;
-
 import com.springboot.web.lucila.app.models.dao.IClienteDao;
 import com.springboot.web.lucila.app.models.dao.IReciboDao;
 import com.springboot.web.lucila.app.models.dao.ICarritoDao;
 import com.springboot.web.lucila.app.models.entity.Cliente;
 import com.springboot.web.lucila.app.models.entity.Carrito;
 import com.springboot.web.lucila.app.models.entity.Recibo;
-
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,6 +31,13 @@ public class ClienteServiceImpl implements IClienteService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
+	public Page<Cliente> findAll(Pageable pageable) {
+		return clienteDao.findAll(pageable);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public List<Cliente> findAllClientes() {
 		// TODO Auto-generated method stub
 		return (List<Cliente>)clienteDao.listaClientes();
@@ -110,6 +116,8 @@ public class ClienteServiceImpl implements IClienteService {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 
 }

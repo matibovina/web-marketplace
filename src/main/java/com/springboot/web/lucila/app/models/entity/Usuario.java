@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -24,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class Usuario implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,10 +37,10 @@ public class User implements Serializable {
 	private String email;
 
 	@NotEmpty(message = "No puede estar vacio")
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, length = 20, unique = true)
 	private String username;
 
-	@Column
+	@Column(length = 60)
 	@NotEmpty
 	private String password;
 
@@ -50,17 +51,16 @@ public class User implements Serializable {
 	@JoinColumn(name = "user_id")
 	private Cliente cliente;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "authorities", joinColumns = @JoinColumn(name = "user_id"),
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "users_authorities", joinColumns = @JoinColumn(name = "user_id"),
 	inverseJoinColumns = @JoinColumn(name = "role_id"),
-	uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})})
+	uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})}) 
 	private List<Authority> roles;
 
-	public User(Long id,
+	public Usuario(Long id,
 			@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"") @NotEmpty(message = "No puede estar vacio") String email,
 			@NotEmpty(message = "No puede estar vacio") String username, @NotEmpty String password,
 			@NotNull Boolean enabled, Cliente cliente) {
-		super();
 		this.id = id;
 		this.email = email;
 		this.username = username;
@@ -69,7 +69,7 @@ public class User implements Serializable {
 		this.cliente = cliente;
 	}
 
-	public User() {}
+	public Usuario() {}
 
 	public Long getId() {
 		return id;
@@ -103,7 +103,7 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public Boolean getEnabled() {
+	public Boolean isEnabled() {
 		return enabled;
 	}
 

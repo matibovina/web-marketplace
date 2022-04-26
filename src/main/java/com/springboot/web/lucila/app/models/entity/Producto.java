@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.hql.internal.ast.tree.BooleanLiteralNode;
 
@@ -28,6 +29,9 @@ public class Producto implements Serializable{
 	
 	private String imagen;
 	
+	@Size(max = 200)
+	private String imagenes[];
+	
 	private float precio;
 	
 	public Producto() {}
@@ -41,6 +45,19 @@ public class Producto implements Serializable{
 		this.existencias = existencias;
 		this.isDisponible = isDisponible;
 		this.imagen = imagen;
+		this.precio = precio;
+	}
+
+	public Producto(Long id, String nombre, String codigo, int existencias, Boolean isDisponible, String imagen,
+			String[] imagenes, float precio) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.codigo = codigo;
+		this.existencias = existencias;
+		this.isDisponible = isDisponible;
+		this.imagen = imagen;
+		this.imagenes = new String[4];
 		this.precio = precio;
 	}
 
@@ -115,6 +132,14 @@ public class Producto implements Serializable{
 		 
 	 }
 	
+	public String[] getImagenes() {
+		return imagenes;
+	}
+
+	public void setImagenes(String imagenes[]) {
+		this.imagenes = imagenes;
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	
