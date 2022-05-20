@@ -19,6 +19,13 @@ public class Authority implements Serializable{
 	
 	@Column(unique = true, length = 20)
 	private String authority;
+	
+	public Authority() {
+	
+	}
+	public Authority(String authority) {
+		this.authority = authority;
+	}
 
 	public Long getId() {
 		return id;

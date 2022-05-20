@@ -40,7 +40,7 @@ public class ClienteController {
 	@Autowired
 	private IClienteService clienteService;
 
-	//@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("/clientes")
 	public List<Cliente> listarClientes() {
 		return (List<Cliente>) clienteService.findAll();
@@ -78,7 +78,7 @@ public class ClienteController {
 		return new ResponseEntity<Cliente>(cliente, HttpStatus.OK);		
 
 	}
-	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	//@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping(value = {"/clientes", "/user/{id}"})
 	public ResponseEntity<?> createCliente(
 			@Valid @RequestBody Cliente cliente, BindingResult result) {
@@ -168,7 +168,7 @@ public class ClienteController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-	@Secured("ROLE_ADMIN")
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@DeleteMapping("/clientes/{id}")
 	public ResponseEntity<?> deleteCliente(@Valid @PathVariable Long id) {
 

@@ -1,31 +1,46 @@
 package com.springboot.web.lucila.app.models.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.springboot.web.lucila.app.models.dao.IAuthorityDao;
 import com.springboot.web.lucila.app.models.dao.IUserDao;
+import com.springboot.web.lucila.app.models.entity.Authority;
 import com.springboot.web.lucila.app.models.entity.Cliente;
 import com.springboot.web.lucila.app.models.entity.Usuario;
 
 @Service
 public class UserService implements IUserService, UserDetailsService {
+	
+	protected EntityManager em;
 
 	Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Autowired
 	private IUserDao userDao;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private IAuthorityDao authorityDao;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -47,6 +62,12 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
+	public Usuario save(Usuario user) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		return userDao.save(user);
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public Usuario findByUsername(String username) {
 		return userDao.findByUsername(username);
@@ -55,13 +76,7 @@ public class UserService implements IUserService, UserDetailsService {
 	@Override
 	public List<Usuario> findAll() {
 		// TODO Auto-generated method stub
-		return (List<Usuario>) userDao.findAll();	
-		}
-
-	@Override
-	public Usuario save(Usuario user) {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<Usuario>) userDao.findAll();
 	}
 
 	@Override
@@ -71,21 +86,23 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
-	public List<Cliente> findByNombre(String nombre) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void delete(Long id) {
 		// TODO Auto-generated method stub
-		
+
 	}
+//	@Transactional
+//	@Override
+//	public List<Authority> insertIntoRoles(Long UserId, Long RoleId) {
+//		
+//		return userDao.insertIntoRoles(UserId, RoleId);
+//	}
 
 	@Override
-	public void saveCliente(Cliente cliente) {
-		// TODO Auto-generated method stub
-		
-	}
+	@Query
+	public void addRoles(Usuario user, Authority role) {
+		user.addRole(role);
+	} 
+	
+	
 
 }

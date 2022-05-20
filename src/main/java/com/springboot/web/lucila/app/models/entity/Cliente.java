@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
@@ -36,13 +37,13 @@ public class Cliente implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_cliente")
 	private Long id;
-	
-	@NotEmpty
-	@Size(min=2, max=15, message="La longitud del nombre es de 2 a 15 caracteres")
+
+	// @NotEmpty
+	@Size(min = 2, max = 15, message = "La longitud del nombre es de 2 a 15 caracteres")
 	private String nombre;
 
-	@NotEmpty
-	@Size(min=2, max=15, message="La longitud del apellido es de 2 a 15 caracteres")
+	// @NotEmpty
+	@Size(min = 2, max = 15, message = "La longitud del apellido es de 2 a 15 caracteres")
 	private String apellido;
 
 	@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"")
@@ -53,39 +54,48 @@ public class Cliente implements Serializable {
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
-	
-	@NotNull
+
+	// @NotNull
 	private Long telefono;
-	
-	@NotNull(message = "La fecha de nacimiento es obligatoria")
+
+	// @NotNull(message = "La fecha de nacimiento es obligatoria")
 	@DateTimeFormat
 	@Column(name = "fecha_nacimiento")
 	private String fechaNacimiento;
 
-	@OneToOne(optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id")
-	private Usuario user;
-		
-	
-	@JsonIgnoreProperties({"cliente", "hibernateLazyInitializer", "handler"})
+	 @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	 @JoinColumn(name = "user_id", referencedColumnName = "id")
+	 @JsonIgnoreProperties({ "cliente", "hibernateLazyInitializer", "handler" })
+	 private Usuario user;
+
+	@JsonIgnoreProperties({ "cliente", "hibernateLazyInitializer", "handler" })
 	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Recibo> recibos;
-	
-	@JsonIgnoreProperties({"cliente", "hibernateLazyInitializer", "handler"})
+
+	@JsonIgnoreProperties({ "cliente", "hibernateLazyInitializer", "handler" })
 	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Carrito> carrito;
-	
-	 @PrePersist
+
+	@PrePersist
 	public void prePersist() {
 		createAt = new Date();
-	} 
-	
+	}
+
 	public Cliente() {
 		recibos = new ArrayList<Recibo>();
 		carrito = new ArrayList<Carrito>();
 	}
-	
-	 
+
+	public Cliente(@Size(min = 2, max = 15, message = "La longitud del nombre es de 2 a 15 caracteres") String nombre,
+			@Size(min = 2, max = 15, message = "La longitud del apellido es de 2 a 15 caracteres") String apellido,
+			@Email(message = "Formato de Email invalido, Ej: \"email@email.com\"") @NotEmpty(message = "No puede estar vacio") String email,
+			Usuario user) {
+		super();
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.email = email;
+		this.user = user;
+	}
 
 	public List<Recibo> getRecibos() {
 		return recibos;
@@ -102,7 +112,6 @@ public class Cliente implements Serializable {
 	public void setCarrito(List<Carrito> carrito) {
 		this.carrito = carrito;
 	}
-
 
 	public Long getId() {
 		return id;

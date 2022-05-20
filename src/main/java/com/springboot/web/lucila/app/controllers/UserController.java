@@ -12,7 +12,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.web.lucila.app.models.entity.Authority;
+import com.springboot.web.lucila.app.models.entity.Carrito;
+import com.springboot.web.lucila.app.models.entity.Cliente;
 import com.springboot.web.lucila.app.models.entity.Usuario;
+import com.springboot.web.lucila.app.models.services.IAuthorityService;
+import com.springboot.web.lucila.app.models.services.IClienteService;
 import com.springboot.web.lucila.app.models.services.IUserService;
 
 @RestController
@@ -33,19 +37,33 @@ public class UserController {
 
 	@Autowired
 	private IUserService userService;
-	
-	@Secured("ROLE_ADMIN")
-	@GetMapping("/users")
+
+	@Autowired
+	private IClienteService clienteService;
+
+	@Autowired
+	private IAuthorityService authorityService;
+
+	@GetMapping("/user")
 	public List<Usuario> mostrarUsuarios() {
 		return userService.findAll();
 	}
-	
-	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+
+	// @Secured({ "ROLE_ADMIN", "ROLE_USER" })
+	/*
+	 * 
+	 * Metodo que crea a un usuario (que viene desde el lado del cliente), agrega
+	 * roles y permisos y crea un cliente para ese usuario.
+	 * 
+	 */
 	@PostMapping("/user")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> createUser(@Valid @RequestBody Usuario user, BindingResult result) {
 
 		Usuario usuario = null;
+		Cliente cliente = null;
+		Authority roles = null;
+		Carrito carrito = null;
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -58,7 +76,18 @@ public class UserController {
 		}
 
 		try {
+			roles = authorityService.findById((long) 1);
+			System.out.println(roles.getAuthority());
+			userService.addRoles(user, roles);
 			usuario = userService.save(user);
+			cliente = new Cliente(usuario.getNombre(), usuario.getApellidos(), usuario.getEmail(), usuario);
+//			cliente.setUser(usuario);
+//			cliente.setNombre(usuario.getNombre());
+//			cliente.setApellido(usuario.getApellidos());
+//			cliente.setEmail(usuario.getEmail());
+			cliente = clienteService.save(cliente);
+			usuario.setCliente(cliente);
+
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al realizar el insert en la base de datos.");
 			response.put("error", e.getMessage().concat(": ".concat(e.getMostSpecificCause().getLocalizedMessage())));
@@ -72,13 +101,11 @@ public class UserController {
 
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-	
-	@Secured({"ROLE_ADMIN", "ROLE_USER"})
+
+	@Secured({ "ROLE_ADMIN", "ROLE_USER" })
 	@PutMapping("user/update/{id}")
 	public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody Usuario user, BindingResult result) {
-
 		Map<String, Object> response = new HashMap<>();
-
 		Usuario userActual = userService.findById(id);
 		Usuario updatedUser = null;
 
@@ -88,22 +115,16 @@ public class UserController {
 					.collect(Collectors.toList());
 			response.put("errors", errors);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
-
 		}
-
 		if (userActual == null) {
 			response.put("mensaje",
 					"Error: el usuario con ID: ".concat(id.toString()).concat(" no existe en la base de datos"));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-
 		}
-
 		try {
-			userActual.setUsername(user.getUsername());
 			userActual.setEmail(user.getEmail());
 			userActual.setPassword(user.getPassword());
 			userActual.setEnabled(user.isEnabled());
-
 			updatedUser = userService.save(userActual);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al actualizar en la base de datos.");
@@ -114,7 +135,7 @@ public class UserController {
 		response.put("user", updatedUser);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-	
+
 	@Secured("ROLE_ADMIN")
 	@DeleteMapping("/user/delete/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -136,7 +157,5 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}
-	
-	
 
 }

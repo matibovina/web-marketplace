@@ -215,7 +215,8 @@ public class ProductoController {
 
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-
+	
+	//@Secured("ROLE_ADMIN")
 	@GetMapping("upload/img/{nombreImagen:.+}")
 	public ResponseEntity<Resource> mostrarImagen(@PathVariable String nombreImagen) {
 

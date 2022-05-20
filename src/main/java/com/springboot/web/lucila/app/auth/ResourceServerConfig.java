@@ -22,9 +22,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(HttpMethod.GET,"/images/**", "/api/clientes", "/api/productos/page/{page}", "/api/productos", "/api/productos/{id}", "/api/upload/img/**", "/api/users").permitAll()
-		/*.antMatchers(HttpMethod.GET, "/api/clientes/{id}").hasAnyRole("USER", "ADMIN")
-		.antMatchers(HttpMethod.POST, "/api/clientes", "/api/productos", "/api/productos/upload").hasRole("ADMIN")*/
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/images/**", "/api/productos/page/{page}", "/api/productos", "/api/carrito/**", "/api/productos/{id}", "/api/user").permitAll()
+		/*.antMatchers(HttpMethod.GET, "/api/clientes/{id}").hasAnyRole("USER", "ADMIN") */
+		.antMatchers(HttpMethod.POST, "/api/user", "/api/clientes", "/api/productos", "/api/carrito/**", "/api/clientes", "/api/productos/upload").permitAll()
 		.anyRequest().authenticated()
 		.and()
 		.cors().configurationSource(corsConfigurationSource());

@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.web.lucila.app.models.entity.Producto;
 import com.springboot.web.lucila.app.models.entity.Carrito;
+import com.springboot.web.lucila.app.models.entity.Cliente;
+import com.springboot.web.lucila.app.models.services.ICarritoService;
 import com.springboot.web.lucila.app.models.services.IClienteService;
 import com.springboot.web.lucila.app.models.services.IProductoService;
 import com.springboot.web.lucila.app.models.services.IProductoVendidoService;
@@ -36,27 +38,39 @@ public class CarritoController {
 	@Autowired
 	private IProductoService productoService;
 
+	@Autowired
+	private ICarritoService carritoService;
+
 //	@Autowired
 //	private IProductoVendidoService productoVendidoService;
 	
-	@GetMapping("/carrito")
-	public List<Carrito> listarCarrito() {
-		return (List<Carrito>) clienteService.listarCarrito();
+	/*
+	 *Muestra los items en el carrito del cliente
+	 * 
+	 */
+	@GetMapping({"/carrito/{cliente-id}", "/carrito"})
+	public List<Carrito> listarCarrito(@Valid @PathVariable(value = "cliente-id") Long clienteId) {
+		return (List<Carrito>) carritoService.listarCarrito(clienteId);
 	}
+	/*
+	 * Guarda el producto (tipo cantidad etc) en el carrito del cliente
+	 */
 	
-	@PostMapping("/carrito/{id}")
+	@PostMapping("/carrito/{cliente-id}")
 	public ResponseEntity<?> guardarProductoParaVender(BindingResult result, 
 			@RequestBody Producto producto,
-			@PathVariable (value = "producto_id") Long id,
-			@RequestParam(name = "item_id", required = false) Long itemId,
+			@PathVariable (value = "cliente_id") Long id,
 			@RequestParam(name = "cantidad", required = false) Integer cantidad
 			) {
 			
 			Map<String, Object> response = new HashMap<>();
 			
-			Producto p = productoService.findById(id);
+			Producto p = null;
 			
 			Carrito carrito = null;
+			
+			Cliente cliente = null; 
+			
 					
 				if(result.hasErrors()) {
 					List<String> errors = result.getFieldErrors()
@@ -68,9 +82,12 @@ public class CarritoController {
 					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 				}
 				
-				if(itemId == null || itemId == 0) {
-					response.put("mensaje", "No hay ningun producto seleccionado.");
-					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+				try {
+					p = new Producto();
+					p = productoService.findById(producto.getId());
+					cliente = clienteService.findById(id);
+				} catch (Exception e) {
+					// TODO: handle exception
 				}
 				
 				if(p.getExistencias()>=0) {
@@ -79,16 +96,18 @@ public class CarritoController {
 				}
 				
 				try {
-					carrito.setProducto(p);
+					carrito = new Carrito();
 					carrito.setCantidad(cantidad);
-					carrito.calcularImporte();
+					carrito.setCliente(cliente);
+					carrito.setProducto(p);
+					carritoService.saveCarrito(carrito);
 				} catch (DataAccessException e) {
 					response.put("mensaje", "Error al agregar el producto al carrito");
 					response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
 					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 				
-				response.put("mensaje", p.getNombre().concat(" agregado al carrito con exito"));
+				response.put("mensaje", producto.getNombre().concat(" agregado al carrito con exito"));
 				response.put("carrito", carrito);
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 		
