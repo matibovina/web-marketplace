@@ -1,22 +1,23 @@
 package com.springboot.web.lucila.app.models.services;
 
 import java.util.List;
+import java.util.Set;
 
-import com.springboot.web.lucila.app.models.entity.Cliente;
-import com.springboot.web.lucila.app.models.entity.User;
+import com.springboot.web.lucila.app.models.entity.Authority;
+import com.springboot.web.lucila.app.models.entity.Usuario;
 
 public interface IUserService {
 	
-	public List<User> findAll();
+	public Usuario findByUsername(String username);
 	
-	public User save(User user);
+	public List<Usuario> findAll();
 	
-	public User findById(Long id);
-		
-	public List<Cliente> findByNombre(String nombre);
+	public Usuario save(Usuario user);
 	
+	public Usuario findById(Long id);
+			
 	public void delete(Long id);
 	
-	public void saveCliente(Cliente cliente);
-
+	public void addRoles(Usuario user, Authority role);
+	
 }
