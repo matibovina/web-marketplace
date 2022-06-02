@@ -14,8 +14,6 @@ public class JwtConfig {
 			+ "FQIDAQAB\n"
 			+ "-----END PUBLIC KEY-----";
 	
-	public static final String RSA_PRIVATE = "-----BEGIN RSA PRIVATE KEY-----\n"
 
-			+ "-----END RSA PRIVATE KEY-----";
 
 }
