@@ -40,6 +40,8 @@ public class CarritoController {
 
 	@Autowired
 	private ICarritoService carritoService;
+	
+	private String prueba = "Esto es para probar git ignore";
 
 //	@Autowired
 //	private IProductoVendidoService productoVendidoService;

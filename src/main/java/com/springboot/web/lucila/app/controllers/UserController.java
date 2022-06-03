@@ -81,10 +81,6 @@ public class UserController {
 			userService.addRoles(user, roles);
 			usuario = userService.save(user);
 			cliente = new Cliente(usuario.getNombre(), usuario.getApellidos(), usuario.getEmail(), usuario);
-//			cliente.setUser(usuario);
-//			cliente.setNombre(usuario.getNombre());
-//			cliente.setApellido(usuario.getApellidos());
-//			cliente.setEmail(usuario.getEmail());
 			cliente = clienteService.save(cliente);
 			usuario.setCliente(cliente);
 
